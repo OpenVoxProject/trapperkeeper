@@ -1,9 +1,11 @@
+---
 name: Clojure Linting
 
 on:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
-    paths: ['src/**','test/**','.clj-kondo/config.edn','project.clj','.github/**']
+  pull_request: {}
+  push:
+    branches:
+      - main
 
 jobs:
   clojure-linting:
