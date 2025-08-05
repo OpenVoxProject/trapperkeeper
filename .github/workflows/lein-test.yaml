@@ -1,10 +1,11 @@
+---
 name: PR Testing
 
 on:
-  workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, edited, synchronize]
-    paths: ['src/**','test/**','project.clj']
+  pull_request: {}
+  push:
+    branches:
+      - main
 
 jobs:
   pr-testing:
@@ -24,6 +25,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
+      - name: Install Clojure tools
+        uses: DeLaGuardo/setup-clojure@13.2
+        with:
+          lein: latest
       - name: clojure tests
         run: lein test
         timeout-minutes: 30
