@@ -7,6 +7,10 @@ on:
     branches:
       - main
 
+# minimal permissions
+permissions:
+  contents: read
+
 jobs:
   clojure-linting:
     name: Clojure Linting
