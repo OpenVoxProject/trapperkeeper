@@ -70,7 +70,7 @@
                        :classifiers ^:replace []}}
 
   :plugins [[lein-parent "0.3.9"]
-            [jonase/eastwood "1.2.2" :exclusions [org.clojure/clojure]]
+            [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             [puppetlabs/i18n "0.9.2"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
