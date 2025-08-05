@@ -25,6 +25,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
+      - name: Install Clojure tools
+        uses: DeLaGuardo/setup-clojure@13.2
+        with:
+          lein: latest
       - name: clojure tests
         run: lein test
         timeout-minutes: 30
