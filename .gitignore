@@ -13,3 +13,7 @@ pom.xml
 /resources/locales.clj
 /resources/puppetlabs/trapperkeeper/*.class
 /dev-resources/i18n/bin
+/.bundle
+/.vendor
+/vendor
+/Gemfile.lock
