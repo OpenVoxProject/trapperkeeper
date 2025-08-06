@@ -46,7 +46,7 @@
                  [nrepl/nrepl]
                  [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
 
-  :deploy-repositories [["releases" {:url "https://clojars.org/repo"
+  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
