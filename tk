@@ -5,7 +5,7 @@ set -ueo pipefail
 usage() { echo "Usage: tk JVM_ARG ... -- TK_ARG ..."; }
 misuse() { usage 1>&2; exit 2; }
 
-jar_glob='trapperkeeper-*-SNAPSHOT-standalone.jar'
+jar_glob='trapperkeeper-*-standalone.jar'
 
 # Believe last -cp wins for java, and here, any final -cp path will be
 # placed in front of the jar.
