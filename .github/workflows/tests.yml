@@ -32,6 +32,8 @@ jobs:
         run: clj-kondo --lint src test
       - name: eastwood lint
         run: lein eastwood
+      - name: output dependencies
+        run: lein deps :tree
 
   run-lein-tests:
     name: PR Testing
