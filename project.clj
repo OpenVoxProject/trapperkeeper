@@ -44,7 +44,9 @@
                  [org.openvoxproject/kitchensink "3.4.2" :exclusions [cheshire]]
                  [org.openvoxproject/i18n]
                  [nrepl/nrepl]
-                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
+                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
+
+                 [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]]
 
   :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
