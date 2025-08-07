@@ -44,7 +44,9 @@
                  [puppetlabs/kitchensink nil :exclusions [cheshire]]
                  [puppetlabs/i18n]
                  [nrepl/nrepl]
-                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
+                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
+
+                 [com.kohlschutter.junixsocket/junixsocket-core "2.6.1" :extension "pom"]]
 
   :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
