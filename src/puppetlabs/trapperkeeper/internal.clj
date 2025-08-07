@@ -1,6 +1,4 @@
 (ns puppetlabs.trapperkeeper.internal
-  (:import (clojure.lang ExceptionInfo IFn IDeref)
-           (java.lang ArithmeticException NumberFormatException))
   (:require [clojure.tools.logging :as log]
             [beckon]
             [plumbing.graph :as graph]
@@ -14,7 +12,14 @@
             [schema.core :as schema]
             [clojure.core.async :as async]
             [clojure.core.async.impl.protocols :as async-prot]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs])
+  (:import
+   (clojure.lang ExceptionInfo IFn IDeref)
+   (java.lang ArithmeticException NumberFormatException)
+   (java.io File)
+   (java.net DatagramPacket SocketException)
+   ;; Looks like JDK 16+ support doesn't do SOCK_DGRAM yet
+   (org.newsclub.net.unix AFUNIXSocketAddress AFUNIXDatagramSocket)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Schemas
@@ -27,6 +32,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Private
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;  Optional systemd support
+
+(def systemd-notify-socket (System/getenv "NOTIFY_SOCKET"))
+
+(defn maybe-notify-systemd [message]
+  (when systemd-notify-socket
+    (with-open [s (AFUNIXDatagramSocket/newInstance)]
+      (let [buf (.getBytes message "UTF-8")
+            addr (-> systemd-notify-socket File. AFUNIXSocketAddress/of)
+            connected? (try
+                         (.connect s addr)
+                         true
+                         ;; Doesn't appear to throw ConnectException
+                         ;; for an unmonitored socket.
+                         (catch SocketException _
+                           (log/warn (i18n/trs "Unable to connect to NOTIFY_SOCKET {0}"
+                                               (pr-str systemd-notify-socket)))
+                           nil))]
+        (when connected?
+          (.send s (DatagramPacket. buf (count buf))))))))
+
+(defn notice-service-ready [] (maybe-notify-systemd "READY=1\n"))
+(defn notice-service-reloading [] (maybe-notify-systemd "RELOADING=1\n"))
+(defn notice-service-stopping [] (maybe-notify-systemd "STOPPING=1\n"))
 
 ;; This is (eww) a global variable that holds a reference to all of the running
 ;; Trapperkeeper apps in the process. It can be used when connecting via nrepl
@@ -615,11 +645,13 @@
         this)
       (a/start [this]
         (run-lifecycle-fns app-context s/start "start" ordered-services)
+        (notice-service-ready)
         (inc-restart-counter! this)
         this)
       (a/stop [this]
         (a/stop this false))
       (a/stop [this throw?]
+        (notice-service-stopping)
         (let [errors (shutdown! app-context)]
           (if (and throw? (seq errors))
             (let [msg (i18n/trs "Error during app shutdown!")]
@@ -628,10 +660,12 @@
             this)))
       (a/restart [this]
         (try
+          (notice-service-reloading)
           (run-lifecycle-fns app-context s/stop "stop" (reverse ordered-services))
           (doseq [svc-id (keys services-by-id)] (swap! app-context assoc-in [:service-contexts svc-id] {}))
           (run-lifecycle-fns app-context s/init "init" ordered-services)
           (run-lifecycle-fns app-context s/start "start" ordered-services)
+          (notice-service-ready)
           (inc-restart-counter! this)
           this
           (catch Throwable t
