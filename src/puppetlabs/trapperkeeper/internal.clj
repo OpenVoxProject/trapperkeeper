@@ -19,8 +19,27 @@
    (java.io File)
    (java.net DatagramPacket SocketException)
    ;; Looks like JDK 16+ support doesn't do SOCK_DGRAM yet
-   (org.newsclub.net.unix AFUNIXSocketAddress AFUNIXDatagramSocket)))
+   (org.newsclub.net.unix AFUNIXSocketAddress AFUNIXDatagramSocket)
+   (java.nio.charset StandardCharsets)))
 
+;; helper functions to resolve unknown type references
+;; this feels cleaner compared to type hints, but I've no idea what I'm doing
+;; - bastelfreak 2025-08-26
+(defn utf8-bytes
+  "Convert a String to a UTF-8 byte array."
+  [^String s]
+  (.getBytes s StandardCharsets/UTF_8))
+
+(defn socket-addr
+  "Convert a String path to a reflection-free AFUNIXSocketAddress."
+  [^String path]
+  (AFUNIXSocketAddress/of (File. path)))
+
+(defn send-packet!
+  "Send a UTF-8 message via a connected AFUNIXDatagramSocket."
+  [^AFUNIXDatagramSocket s ^String msg]
+  (let [^bytes buf (utf8-bytes msg)]
+    (.send s (DatagramPacket. buf (alength buf)))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Schemas
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,22 +56,18 @@
 
 (def systemd-notify-socket (System/getenv "NOTIFY_SOCKET"))
 
-(defn maybe-notify-systemd [message]
-  (when systemd-notify-socket
-    (with-open [s (AFUNIXDatagramSocket/newInstance)]
-      (let [buf (.getBytes message "UTF-8")
-            addr (-> systemd-notify-socket File. AFUNIXSocketAddress/of)
-            connected? (try
-                         (.connect s addr)
-                         true
-                         ;; Doesn't appear to throw ConnectException
-                         ;; for an unmonitored socket.
-                         (catch SocketException _
-                           (log/warn (i18n/trs "Unable to connect to NOTIFY_SOCKET {0}"
-                                               (pr-str systemd-notify-socket)))
-                           nil))]
-        (when connected?
-          (.send s (DatagramPacket. buf (count buf))))))))
+(defn maybe-notify-systemd
+  "Send a message to systemd NOTIFY_SOCKET if available."
+  [^String message]
+  (when-let [^String socket-path systemd-notify-socket]
+    (let [^AFUNIXSocketAddress addr (socket-addr socket-path)]
+      (with-open [^AFUNIXDatagramSocket s (AFUNIXDatagramSocket/newInstance)]
+        (try
+          (.connect s addr)
+          (send-packet! s message)
+          (catch SocketException _
+            (log/warn (i18n/trs "Unable to connect to NOTIFY_SOCKET {0}"
+                                (pr-str socket-path)))))))))
 
 (defn notice-service-ready [] (maybe-notify-systemd "READY=1\n"))
 (defn notice-service-reloading [] (maybe-notify-systemd "RELOADING=1\n"))
