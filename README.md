@@ -33,7 +33,7 @@ You can find a quick-start, example code, and lots and lots of documentation in 
 A Leiningen template is available that shows a suggested project structure:
 
     lein new trapperkeeper my.namespace/myproject
-    
+
 Once you've created a project from the template, you can run it via the lein alias:
 
     lein tk
