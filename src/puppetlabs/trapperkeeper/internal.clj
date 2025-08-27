@@ -1,4 +1,13 @@
 (ns puppetlabs.trapperkeeper.internal
+  (:import
+   (clojure.lang ExceptionInfo IFn IDeref)
+   (java.lang ArithmeticException NumberFormatException)
+   (java.io File)
+   (java.net DatagramPacket SocketException)
+   ;; Looks like JDK 16+ support doesn't do SOCK_DGRAM yet
+   (org.newsclub.net.unix AFUNIXSocketAddress AFUNIXDatagramSocket)
+   (java.nio.charset StandardCharsets))
+
   (:require [clojure.tools.logging :as log]
             [beckon]
             [plumbing.graph :as graph]
@@ -12,15 +21,7 @@
             [schema.core :as schema]
             [clojure.core.async :as async]
             [clojure.core.async.impl.protocols :as async-prot]
-            [me.raynes.fs :as fs])
-  (:import
-   (clojure.lang ExceptionInfo IFn IDeref)
-   (java.lang ArithmeticException NumberFormatException)
-   (java.io File)
-   (java.net DatagramPacket SocketException)
-   ;; Looks like JDK 16+ support doesn't do SOCK_DGRAM yet
-   (org.newsclub.net.unix AFUNIXSocketAddress AFUNIXDatagramSocket)
-   (java.nio.charset StandardCharsets)))
+            [me.raynes.fs :as fs]))
 
 ;; helper functions to resolve unknown type references
 ;; this feels cleaner compared to type hints, but I've no idea what I'm doing
