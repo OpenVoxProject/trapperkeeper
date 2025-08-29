@@ -74,7 +74,7 @@
             [org.openvoxproject/i18n "1.0.2"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
-                                           puppetlabs.trapperkeeper.internal [{:line 128}]
+                                           puppetlabs.trapperkeeper.internal [{:line 174}]
                                            puppetlabs.trapperkeeper.testutils.logging true
                                            puppetlabs.trapperkeeper.testutils.logging-test true
                                            puppetlabs.trapperkeeper.services.nrepl.nrepl-service-test true
