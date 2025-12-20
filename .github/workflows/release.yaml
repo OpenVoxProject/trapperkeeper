@@ -1,39 +1,15 @@
 ---
 name: Publish package to GitHub Packages and clojars.org
 
+permissions:
+  contents: read
+
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 
 jobs:
-  publish:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      packages: write
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5
-        with:
-          java-version: '21'
-          distribution: temurin
-      - name: Install clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
-        with:
-          lein: 'latest'
-      #- name: Publish package to GitHub
-      #  run: lein deploy github
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #    GITHUB_ACTOR: ${{ github.actor }}
-      - name: Publish to clojars.org
-        run: lein deploy clojars
-        env:
-          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
-          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
-      - name: Create Release Page
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create --repo ${{ github.repository }} ${{ github.ref_name }} --generate-notes
+  release:
+    uses: 'openvoxproject/shared-actions/.github/workflows/clojure_release.yml@main'
+    secrets:
+      github_pat: ${{ secrets.OPENVOXBOT_COMMIT_AND_PRS }}
+      ssh_private_key: ${{ secrets.OPENVOXBOT_SSH_PRIVATE_KEY }}
