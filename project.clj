@@ -41,7 +41,7 @@
                  [org.openvoxproject/typesafe-config]
                  ;; exclusion added due to dependency conflict over asm and jackson-dataformat-cbor
                  ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
-                 [org.openvoxproject/kitchensink "3.4.0" :exclusions [cheshire]]
+                 [org.openvoxproject/kitchensink "3.4.2-SNAPSHOT" :exclusions [cheshire]]
                  [org.openvoxproject/i18n]
                  [nrepl/nrepl]
                  [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
@@ -63,7 +63,7 @@
   :profiles {:dev {:source-paths ["examples/shutdown_app/src"
                                   "examples/java_service/src/clj"]
                    :java-source-paths ["examples/java_service/src/java"]
-                   :dependencies [[org.openvoxproject/kitchensink "3.4.0" :classifier "test" :exclusions [cheshire]]]}
+                   :dependencies [[org.openvoxproject/kitchensink "3.4.2-SNAPSHOT" :classifier "test" :exclusions [cheshire]]]}
 
              :testutils {:source-paths ^:replace ["test"]}
              :uberjar {:aot [puppetlabs.trapperkeeper.main]
@@ -71,7 +71,7 @@
 
   :plugins [[lein-parent "0.3.9"]
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
-            [org.openvoxproject/i18n "0.9.2"]]
+            [org.openvoxproject/i18n "0.9.3-SNAPSHOT"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
                                            puppetlabs.trapperkeeper.internal [{:line 128}]
