@@ -1,20 +1,6 @@
 (def slf4j-version "2.0.17")
-(def logback-version "1.3.16")
+(def logback-version "1.5.32")
 (def i18n-version "1.0.3")
-
-(require '[clojure.string :as str]
-         '[leiningen.core.main :as main])
-(defn fail-if-logback->1-3!
-  "Fails the build if logback-version is > 1.3.x."
-  [logback-version]
-  (let [[x y] (->> (str/split (str logback-version) #"\.")
-                   (take 2)
-                   (map #(Integer/parseInt %)))]
-    (when (or (> x 1)
-              (and (= x 1) (> y 3)))
-      (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
-
-(fail-if-logback->1-3! logback-version)
 
 (defproject org.openvoxproject/trapperkeeper "4.3.3-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
@@ -42,7 +28,7 @@
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
-                         [ch.qos.logback/logback-access ~logback-version]
+                         [ch.qos.logback.access/logback-access-common "2.0.12"]
 
                          [beckon "0.1.1"]
                          [clj-time "0.15.2"]
@@ -57,19 +43,19 @@
                          [org.openvoxproject/typesafe-config "1.0.2"]
                          [prismatic/plumbing "0.6.0"]
                          [prismatic/schema "1.4.1"]]
-  
+
   :dependencies [[org.clojure/clojure]
                  [org.clojure/core.async]
                  [org.clojure/tools.logging]
                  [org.clojure/tools.macro]
-                 
+
                  [beckon]
                  [ch.qos.logback/logback-classic]
-                 ;; even though we don't strictly have a dependency on the following two
+                 ;; even though we don't strictly have a dependency on the following
                  ;; logback artifacts, specifying the dependency version here ensures
                  ;; that downstream projects don't pick up different versions that would
                  ;; conflict with our version of logback-classic
-                 [ch.qos.logback/logback-access]
+                 [ch.qos.logback.access/logback-access-common]
                  [ch.qos.logback/logback-core]
                  [clj-commons/fs]
                  [clj-time]
