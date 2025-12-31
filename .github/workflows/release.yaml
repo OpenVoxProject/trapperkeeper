@@ -1,5 +1,5 @@
 ---
-name: Publish package to clojars.org
+name: Release and publish package to clojars.org
 
 permissions:
   contents: write
