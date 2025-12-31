@@ -1,4 +1,4 @@
-(defproject org.openvoxproject/trapperkeeper "4.1.0"
+(defproject org.openvoxproject/trapperkeeper "4.1.1-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
@@ -6,7 +6,7 @@
 
   :min-lein-version "2.9.0"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.4.0"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.0"]
                    :inherit [:managed-dependencies]}
 
   ;; Abort when version ranges or version conflicts are detected in
@@ -38,15 +38,15 @@
 
                  [beckon]
 
-                 [puppetlabs/typesafe-config]
+                 [org.openvoxproject/typesafe-config]
                  ;; exclusion added due to dependency conflict over asm and jackson-dataformat-cbor
                  ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
-                 [puppetlabs/kitchensink "3.4.0" :exclusions [cheshire]]
-                 [puppetlabs/i18n]
+                 [org.openvoxproject/kitchensink "3.4.2" :exclusions [cheshire]]
+                 [org.openvoxproject/i18n]
                  [nrepl/nrepl]
                  [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
 
-  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
+  :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
                                      :password :env/CLOJARS_PASSWORD
                                      :sign-releases false}]]
@@ -63,7 +63,7 @@
   :profiles {:dev {:source-paths ["examples/shutdown_app/src"
                                   "examples/java_service/src/clj"]
                    :java-source-paths ["examples/java_service/src/java"]
-                   :dependencies [[puppetlabs/kitchensink "3.4.0" :classifier "test" :exclusions [cheshire]]]}
+                   :dependencies [[org.openvoxproject/kitchensink "3.4.2" :classifier "test" :exclusions [cheshire]]]}
 
              :testutils {:source-paths ^:replace ["test"]}
              :uberjar {:aot [puppetlabs.trapperkeeper.main]
@@ -71,7 +71,7 @@
 
   :plugins [[lein-parent "0.3.9"]
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
-            [puppetlabs/i18n "0.9.2"]]
+            [org.openvoxproject/i18n "0.9.3"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
                                            puppetlabs.trapperkeeper.internal [{:line 128}]
@@ -91,4 +91,3 @@
              :continue-on-exception true}
 
   :main puppetlabs.trapperkeeper.main)
-
