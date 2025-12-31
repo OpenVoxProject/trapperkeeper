@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: checkout repo
         uses: actions/checkout@v6
       - name: Install Clojure tools
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['11', '17', '21']
+        version: ['17', '21']
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repo
