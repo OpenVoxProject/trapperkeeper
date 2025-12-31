@@ -6,7 +6,7 @@
 
   :min-lein-version "2.9.0"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.0"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.1"]
                    :inherit [:managed-dependencies]}
 
   ;; Abort when version ranges or version conflicts are detected in
