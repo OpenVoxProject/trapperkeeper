@@ -37,7 +37,7 @@ for each.
 Here are some additional projects that provide Trapperkeeper services, and
 other related functionality:
 
-* [trapperkeeper-webserver-jetty9](https://github.com/openvoxproject/trapperkeeper-webserver-jetty9): a Jetty9-based webserver for use with TK applications
+* [trapperkeeper-webserver-jetty10](https://github.com/openvoxproject/trapperkeeper-webserver-jetty10): a jetty10-based webserver for use with TK applications
 * [trapperkeeper-rpc](https://github.com/puppetlabs/trapperkeeper-rpc): a TK service that allows you to easily build a way to call remote TK services over RPC
 * [trapperkeeper-metrics](https://github.com/openvoxproject/trapperkeeper-metrics): a TK service that manages the life cycle of a [MetricRegistry](https://github.com/dropwizard/metrics), so that all of your TK services can register metrics with a common configuration syntax.
 * [trapperkeeper-comidi-metrics](https://github.com/openvoxproject/trapperkeeper-comidi-metrics): a TK utility library that provides middleware to automatically generate metrics for all requests to each of your bidi/comidi HTTP routes.
