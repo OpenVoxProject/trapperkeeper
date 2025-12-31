@@ -71,7 +71,7 @@
 
   :plugins [[lein-parent "0.3.9"]
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
-            [org.openvoxproject/i18n "0.9.3"]]
+            [org.openvoxproject/i18n "0.9.4"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
                                            puppetlabs.trapperkeeper.internal [{:line 128}]
