@@ -53,4 +53,4 @@ Distributed under the [Apache License, Version 2.0](http://www.apache.org/licens
 
 ## Support
 
-GitHub issues and PRs are welcome! Additionally, drop us a line in [the Vox Pupuli Slack](https://voxpupuli.slack.com).
+GitHub issues and PRs are welcome! Additionally, drop us a line in [the Vox Pupuli Slack or IRC channel](https://voxpupuli.org/connect/).
