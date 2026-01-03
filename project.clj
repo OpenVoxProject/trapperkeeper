@@ -1,4 +1,4 @@
-(defproject org.openvoxproject/trapperkeeper "4.2.0"
+(defproject org.openvoxproject/trapperkeeper "4.2.1-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
