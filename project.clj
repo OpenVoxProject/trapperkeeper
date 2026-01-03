@@ -42,7 +42,9 @@
                  [org.openvoxproject/kitchensink "3.5.3" :exclusions [cheshire]]
                  [org.openvoxproject/i18n]
                  [nrepl/nrepl]
-                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
+                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
+
+                 [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]]
 
   :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
@@ -72,7 +74,7 @@
             [org.openvoxproject/i18n "1.0.2"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
-                                           puppetlabs.trapperkeeper.internal [{:line 128}]
+                                           puppetlabs.trapperkeeper.internal [{:line 174}]
                                            puppetlabs.trapperkeeper.testutils.logging true
                                            puppetlabs.trapperkeeper.testutils.logging-test true
                                            puppetlabs.trapperkeeper.services.nrepl.nrepl-service-test true
