@@ -411,7 +411,6 @@
   ([pattern logs level]
    {:pre  [(instance? java.util.regex.Pattern pattern)
            (coll? logs)
-           #_:clj-kondo/ignore
            (contains? legal-levels level)]}
    ;; the logs are formatted as sequences, where the keyword at index 1
    ;; contains the level and the string at index 3 contains the actual
@@ -419,7 +418,6 @@
    (let [matches-level? (fn [log-entry] (or (nil? level) (= level (get log-entry 1))))
          matches-msg? (fn [log-entry] (re-find pattern (get log-entry 3)))
          matches (filter #(and (matches-level? %) (matches-msg? %)) logs)]
-     #_:clj-kondo/ignore
      (map log-entry->map matches))))
 
 (defn ^{:deprecated "1.1.2"} log-to-console
@@ -444,7 +442,6 @@
          (enabled? [_ _level] true)
          (write! [_ lvl ex msg]
            (let [entry [(str log-ns) lvl ex msg]]
-             #_:clj-kondo/ignore
              (when debug? (log-to-console entry))
              (swap! destination conj entry)
              nil)))))))
@@ -464,7 +461,6 @@
                                    (.getLevel logging-event)
                                    ex
                                    (str (.getFormattedMessage logging-event))]]
-                        #_:clj-kondo/ignore
                         (when debug? (log-to-console entry))
                         (swap! destination conj entry)))
                     (close []))]

@@ -1,4 +1,4 @@
-(defproject org.openvoxproject/trapperkeeper "4.1.3-SNAPSHOT"
+(defproject org.openvoxproject/trapperkeeper "4.2.0-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
@@ -6,7 +6,7 @@
 
   :min-lein-version "2.9.0"
 
-  :parent-project {:coords [org.openvoxproject/clj-parent "7.5.1"]
+  :parent-project {:coords [org.openvoxproject/clj-parent "7.6.3"]
                    :inherit [:managed-dependencies]}
 
   ;; Abort when version ranges or version conflicts are detected in
@@ -27,8 +27,6 @@
                  ;; conflict with our version of logback-classic
                  [ch.qos.logback/logback-core]
                  [ch.qos.logback/logback-access]
-                 ;; Janino can be used for some advanced logback configurations
-                 [org.codehaus.janino/janino]
 
                  [clj-time]
                  [clj-commons/fs]
@@ -41,7 +39,7 @@
                  [org.openvoxproject/typesafe-config]
                  ;; exclusion added due to dependency conflict over asm and jackson-dataformat-cbor
                  ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
-                 [org.openvoxproject/kitchensink "3.4.3" :exclusions [cheshire]]
+                 [org.openvoxproject/kitchensink "3.5.3" :exclusions [cheshire]]
                  [org.openvoxproject/i18n]
                  [nrepl/nrepl]
                  [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]]
@@ -63,7 +61,7 @@
   :profiles {:dev {:source-paths ["examples/shutdown_app/src"
                                   "examples/java_service/src/clj"]
                    :java-source-paths ["examples/java_service/src/java"]
-                   :dependencies [[org.openvoxproject/kitchensink "3.4.3" :classifier "test" :exclusions [cheshire]]]}
+                   :dependencies [[org.openvoxproject/kitchensink "3.5.3" :classifier "test" :exclusions [cheshire]]]}
 
              :testutils {:source-paths ^:replace ["test"]}
              :uberjar {:aot [puppetlabs.trapperkeeper.main]
@@ -71,7 +69,7 @@
 
   :plugins [[lein-parent "0.3.9"]
             [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
-            [org.openvoxproject/i18n "0.9.4"]]
+            [org.openvoxproject/i18n "1.0.2"]]
 
   :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
                                            puppetlabs.trapperkeeper.internal [{:line 128}]

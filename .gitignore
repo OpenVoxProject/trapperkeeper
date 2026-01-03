@@ -17,3 +17,6 @@ pom.xml
 /.vendor
 /vendor
 /Gemfile.lock
+
+.eastwood
+.clj-kondo/.cache
