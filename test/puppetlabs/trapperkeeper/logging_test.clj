@@ -1,6 +1,5 @@
 (ns puppetlabs.trapperkeeper.logging-test
-  (:require [clojure.java.io :as io]
-            clojure.stacktrace
+  (:require clojure.stacktrace
             [clojure.test :refer :all]
             [clojure.tools.logging :as log]
             [puppetlabs.trapperkeeper.logging :as tk-logging]
@@ -75,15 +74,9 @@
                     [puppetlabs.trapperkeeper.logging-test :warn nil "log message2 at warn"])]
 
     (testing "logs-matching can filter on message"
-      ;; ignore deprecations
-      #_:clj-kondo/ignore
       (is (= 2 (count (logs-matching #"log message1" log-lines)))))
 
     (testing "logs-matching can filter on message and level"
-      ;; ignore deprecations
-      #_:clj-kondo/ignore
       (is (= 1 (count (logs-matching #"log message1" log-lines :debug))))
-      #_:clj-kondo/ignore
       (is (= "log message1 at debug" (-> (logs-matching #"log message1" log-lines :debug) first :message)))
-      #_:clj-kondo/ignore
       (is (empty? (logs-matching #"log message2" log-lines :info))))))

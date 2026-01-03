@@ -70,8 +70,6 @@
                   :exception nil}]
     (call-with-started
      [new-appender]
-     ;; ignore deprecation
-     #_:clj-kondo/ignore
      #(tgt/with-log-appenders root-logger-name
         [new-appender]
         (is (= [new-appender] (get-appenders logger)))
