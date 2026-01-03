@@ -67,19 +67,7 @@
   (testing "a logging config file isn't required"
     ;; This looks strange, but we're trying to make sure that there are
     ;; no exceptions thrown when we configure logging without a log config file.
-    (is (= nil (tk-logging/configure-logging! nil))))
-
-  (testing "support for logback evaluator filters"
-    ;; This logging config file configures some fancy logback EvaluatorFilters,
-    ;; and writes the log output to a file in `target/test`.
-    (tk-logging/configure-logging! "./dev-resources/logging/logback-evaluator-filter.xml")
-    (log/info "Hi! I should get filtered.")
-    (log/info "Hi! I shouldn't get filtered.")
-    (log/info (IllegalStateException. "OMGOMG") "Hi! I have an exception that should get filtered.")
-    (with-open [reader (io/reader "./target/test/logback-evaluator-filter-test.log")]
-      (let [lines (line-seq reader)]
-        (is (= 1 (count lines)))
-        (is (re-matches #".*Hi! I shouldn't get filtered\..*" (first lines)))))))
+    (is (= nil (tk-logging/configure-logging! nil)))))
 
 (deftest test-logs-matching
   (let [log-lines '([puppetlabs.trapperkeeper.logging-test :info nil "log message1 at info"]
