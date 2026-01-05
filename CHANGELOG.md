@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.0](https://github.com/OpenVoxProject/trapperkeeper/tree/4.3.0) (2026-01-03)
+
+[Full Changelog](https://github.com/OpenVoxProject/trapperkeeper/compare/4.2.0...4.3.0)
+
+**Implemented enhancements:**
+
+- Add initial systemd lifecycle notification support [\#23](https://github.com/OpenVoxProject/trapperkeeper/pull/23) ([bastelfreak](https://github.com/bastelfreak))
+
+## [4.2.0](https://github.com/OpenVoxProject/trapperkeeper/tree/4.2.0) (2026-01-03)
+
+[Full Changelog](https://github.com/OpenVoxProject/trapperkeeper/compare/4.1.2...4.2.0)
+
+**Merged pull requests:**
+
+- Remove Janino support, update clj-parent, kitchensink, i18n [\#32](https://github.com/OpenVoxProject/trapperkeeper/pull/32) ([nmburgan](https://github.com/nmburgan))
+
+## [4.1.2](https://github.com/OpenVoxProject/trapperkeeper/tree/4.1.2) (2025-12-31)
+
+[Full Changelog](https://github.com/OpenVoxProject/trapperkeeper/compare/4.1.1...4.1.2)
+
+**Merged pull requests:**
+
+- Bump clj-parent, kitchensink, and i18n versions [\#28](https://github.com/OpenVoxProject/trapperkeeper/pull/28) ([nmburgan](https://github.com/nmburgan))
+
+## [4.1.1](https://github.com/OpenVoxProject/trapperkeeper/tree/4.1.1) (2025-12-31)
+
+[Full Changelog](https://github.com/OpenVoxProject/trapperkeeper/compare/4.1.0...4.1.1)
+
+**Merged pull requests:**
+
+- CI and version: Changes for OpenVox namespacing [\#27](https://github.com/OpenVoxProject/trapperkeeper/pull/27) ([nmburgan](https://github.com/nmburgan))
+
 ## [4.1.0](https://github.com/OpenVoxProject/trapperkeeper/tree/4.1.0) (2025-08-06)
 
 [Full Changelog](https://github.com/OpenVoxProject/trapperkeeper/compare/4.0.2...4.1.0)
