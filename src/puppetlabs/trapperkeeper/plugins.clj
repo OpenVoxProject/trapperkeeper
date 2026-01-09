@@ -21,23 +21,31 @@
     ;; lein includes project.clj ... no thank you
    (not (= name "project.clj"))))
 
+(def ^:private ignorable-duplicates
+  "Files that commonly appear in multiple JARs but don't cause actual conflicts."
+  ;; This is a file present in Java 9+ JARs that describes module metadata.
+  ;; It's harmless to have multiple copies of it around.
+  #{"module-info.class"})
+
 (defn- handle-duplicate!
   "Helper for `process-file`; handles a found duplicate.  Throws an exception
   if the duplicate is a .class or .clj file.  Otherwise, logs a warning and
   returns the accumulator."
   [container-filename acc ^String filename]
-  (let [error-msg (i18n/trs "Class or namespace {0} found in both {1} and {2}"
-                            filename container-filename (acc filename))]
-    (if (or (.endsWith filename ".class") (.endsWith filename ".clj"))
-      (throw (IllegalArgumentException. ^String error-msg))
+  (if (ignorable-duplicates filename)
+    acc  ;; silently ignore known-safe duplicates
+    (let [error-msg (i18n/trs "Class or namespace {0} found in both {1} and {2}"
+                              filename container-filename (acc filename))]
+      (if (or (.endsWith filename ".class") (.endsWith filename ".clj"))
+        (throw (IllegalArgumentException. ^String error-msg))
 
-      ;; It is common to have other conflicts (besides classes and clojure
-      ;; namespaces), especially during development (for example,
-      ;; jetty-servlet and jetty-http both contain an `about.html` -
-      ;; these conflicts don't exist in the uberjar anyway,
-      ;; and likely aren't important.
-      (log/warn error-msg)))
-  acc)
+        ;; It is common to have other conflicts (besides classes and clojure
+        ;; namespaces), especially during development (for example,
+        ;; jetty-servlet and jetty-http both contain an `about.html` -
+        ;; these conflicts don't exist in the uberjar anyway,
+        ;; and likely aren't important.
+        (log/warn error-msg))
+      acc)))
 
 (defn- process-file
   "Helper for `process-container`.  Processes a file and adds it to the
