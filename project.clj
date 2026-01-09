@@ -1,7 +1,21 @@
 (def slf4j-version "2.0.17")
-(def logback-version "1.5.24")
+(def logback-version "1.3.16")
 (def i18n-version "1.0.3")
 (def kitchensink-version "3.5.5")
+
+(require '[clojure.string :as str]
+         '[leiningen.core.main :as main])
+(defn fail-if-logback->1-3!
+  "Fails the build if logback-version is > 1.3.x."
+  [logback-version]
+  (let [[x y] (->> (str/split (str logback-version) #"\.")
+                   (take 2)
+                   (map #(Integer/parseInt %)))]
+    (when (or (> x 1)
+              (and (= x 1) (> y 3)))
+      (main/abort (format "logback-version %s is not supported by Jetty 10. Must be 1.3.x until we update to Jetty 12." logback-version)))))
+
+(fail-if-logback->1-3! logback-version)
 
 (defproject org.openvoxproject/trapperkeeper "4.3.2-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
