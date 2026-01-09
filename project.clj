@@ -26,7 +26,7 @@
                          [org.openvoxproject/kitchensink ~kitchensink-version :classifier "test"]]
   
   :dependencies [[org.clojure/clojure]
-                 [org.clojure/tools.logging "1.2.4"]
+                 [org.clojure/tools.logging "1.3.1"]
                  [org.clojure/tools.macro "0.2.2"]
                  [org.clojure/core.async "1.5.648"]
 
