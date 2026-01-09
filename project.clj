@@ -3,7 +3,7 @@
 (def i18n-version "1.0.3")
 (def kitchensink-version "3.5.5")
 
-(defproject org.openvoxproject/trapperkeeper "4.3.1"
+(defproject org.openvoxproject/trapperkeeper "4.3.2-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
