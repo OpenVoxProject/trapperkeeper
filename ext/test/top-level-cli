@@ -27,7 +27,7 @@ cat "$tmpdir/out" "$tmpdir/err"
 test "$rc" -eq 0
 grep -F 'Path to bootstrap config file' "$tmpdir/out"
 test $(grep -c -F 'Path to bootstrap config file' "$tmpdir/out") -eq 1
-test $(wc -c < "$tmpdir/out") -eq 650
+test $(wc -c < "$tmpdir/out") -eq 692
 
 
 ## Test handling a missing bootstrap file
