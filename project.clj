@@ -43,7 +43,7 @@
                  [clj-time "0.15.2"]
                  [clj-commons/fs "1.6.312"]
 
-                 [prismatic/plumbing "0.4.2"]
+                 [prismatic/plumbing "0.6.0"]
                  [prismatic/schema "1.4.1"]
 
                  [beckon "0.1.1"]
