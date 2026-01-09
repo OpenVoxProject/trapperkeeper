@@ -1,5 +1,5 @@
 (def slf4j-version "2.0.17")
-(def logback-version "1.3.16")
+(def logback-version "1.5.24")
 (def i18n-version "1.0.2")
 (def kitchensink-version "3.5.4")
 
