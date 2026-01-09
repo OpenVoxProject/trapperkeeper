@@ -28,7 +28,7 @@
   :dependencies [[org.clojure/clojure]
                  [org.clojure/tools.logging "1.2.4"]
                  [org.clojure/tools.macro "0.2.2"]
-                 [org.clojure/core.async "1.5.648"]
+                 [org.clojure/core.async "1.8.741"]
 
                  [org.slf4j/slf4j-api ~slf4j-version]
                  [org.slf4j/log4j-over-slf4j ~slf4j-version]
