@@ -67,7 +67,7 @@
                  ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
                  [org.openvoxproject/kitchensink :exclusions [cheshire]]
                  [org.openvoxproject/i18n ~i18n-version]
-                 [nrepl/nrepl "0.9.0"]
+                 [nrepl/nrepl "1.5.2"]
                  [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
 
                  [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]]
