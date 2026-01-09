@@ -48,7 +48,7 @@
 
                  [beckon "0.1.1"]
 
-                 [org.openvoxproject/typesafe-config "1.0.0"]
+                 [org.openvoxproject/typesafe-config "1.0.1"]
                  ;; exclusion added due to dependency conflict over asm and jackson-dataformat-cbor
                  ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
                  [org.openvoxproject/kitchensink :exclusions [cheshire]]
