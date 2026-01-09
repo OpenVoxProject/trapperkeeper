@@ -40,7 +40,7 @@
                  [ch.qos.logback/logback-core ~logback-version]
                  [ch.qos.logback/logback-access ~logback-version]
 
-                 [clj-time "0.11.0"]
+                 [clj-time "0.15.2"]
                  [clj-commons/fs "1.6.312"]
 
                  [prismatic/plumbing "0.4.2"]
