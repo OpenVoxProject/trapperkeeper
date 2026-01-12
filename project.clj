@@ -1,7 +1,6 @@
 (def slf4j-version "2.0.17")
 (def logback-version "1.3.16")
 (def i18n-version "1.0.3")
-(def kitchensink-version "3.5.5")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
@@ -30,47 +29,60 @@
   ;; requires lein 2.2.0+.
   :pedantic? :abort
 
-  ;; These are to enforce consistent versions across dependencies of dependencies,
-  ;; and to avoid having to define versions in multiple places. If a component
-  ;; defined under :dependencies ends up causing an error due to :pedantic? :abort,
-  ;; because it is a dep of a dep with a different version, move it here.
+  ;; Generally, try to keep version pins in :managed-dependencies and the libraries
+  ;; this project actually uses in :dependencies, inheriting the version from
+  ;; :managed-dependencies. This prevents endless version conflicts due to deps of deps.
+  ;; Renovate should keep the versions largely in sync between projects.
   :managed-dependencies [[org.clojure/clojure "1.12.4"]
+                         [org.clojure/core.async "1.8.741"]
+                         [org.clojure/tools.logging "1.3.1"]
+                         [org.clojure/tools.macro "0.2.2"]
+
+                         [org.slf4j/slf4j-api ~slf4j-version]
+                         [org.slf4j/log4j-over-slf4j ~slf4j-version]
+                         [ch.qos.logback/logback-classic ~logback-version]
+                         [ch.qos.logback/logback-core ~logback-version]
+                         [ch.qos.logback/logback-access ~logback-version]
+
+                         [beckon "0.1.1"]
+                         [clj-time "0.15.2"]
+                         [clj-commons/fs "1.6.312"]
+                         [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]
                          [commons-io "2.21.0"]
-                         [org.openvoxproject/kitchensink ~kitchensink-version]
-                         [org.openvoxproject/kitchensink ~kitchensink-version :classifier "test"]]
+                         [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
+                         [nrepl/nrepl "0.9.0"]
+                         [org.openvoxproject/i18n ~i18n-version]
+                         [org.openvoxproject/kitchensink "3.5.5"]
+                         [org.openvoxproject/kitchensink "3.5.5" :classifier "test"]
+                         [org.openvoxproject/typesafe-config "1.0.1"]
+                         [prismatic/plumbing "0.6.0"]
+                         [prismatic/schema "1.4.1"]]
   
   :dependencies [[org.clojure/clojure]
-                 [org.clojure/tools.logging "1.3.1"]
-                 [org.clojure/tools.macro "0.2.2"]
-                 [org.clojure/core.async "1.8.741"]
-
-                 [org.slf4j/slf4j-api ~slf4j-version]
-                 [org.slf4j/log4j-over-slf4j ~slf4j-version]
-                 [ch.qos.logback/logback-classic ~logback-version]
+                 [org.clojure/core.async]
+                 [org.clojure/tools.logging]
+                 [org.clojure/tools.macro]
+                 
+                 [beckon]
+                 [ch.qos.logback/logback-classic]
                  ;; even though we don't strictly have a dependency on the following two
                  ;; logback artifacts, specifying the dependency version here ensures
                  ;; that downstream projects don't pick up different versions that would
                  ;; conflict with our version of logback-classic
-                 [ch.qos.logback/logback-core ~logback-version]
-                 [ch.qos.logback/logback-access ~logback-version]
-
-                 [clj-time "0.15.2"]
-                 [clj-commons/fs "1.6.312"]
-
-                 [prismatic/plumbing "0.6.0"]
-                 [prismatic/schema "1.4.1"]
-
-                 [beckon "0.1.1"]
-
-                 [org.openvoxproject/typesafe-config "1.0.1"]
-                 ;; exclusion added due to dependency conflict over asm and jackson-dataformat-cbor
-                 ;; see https://github.com/puppetlabs/trapperkeeper/pull/306#issuecomment-1467059264
-                 [org.openvoxproject/kitchensink :exclusions [cheshire]]
+                 [ch.qos.logback/logback-access]
+                 [ch.qos.logback/logback-core]
+                 [clj-commons/fs]
+                 [clj-time]
+                 [com.kohlschutter.junixsocket/junixsocket-core :extension "pom"]
+                 [io.github.clj-kondo/config-slingshot-slingshot]
+                 [nrepl/nrepl]
                  [org.openvoxproject/i18n ~i18n-version]
-                 [nrepl/nrepl "0.9.0"]
-                 [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
-
-                 [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]]
+                 [org.openvoxproject/kitchensink :exclusions [cheshire]]
+                 [org.openvoxproject/typesafe-config]
+                 [org.slf4j/log4j-over-slf4j]
+                 [org.slf4j/slf4j-api]
+                 [prismatic/plumbing]
+                 [prismatic/schema]]
 
   :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/CLOJARS_USERNAME
@@ -89,7 +101,7 @@
   :profiles {:dev {:source-paths ["examples/shutdown_app/src"
                                   "examples/java_service/src/clj"]
                    :java-source-paths ["examples/java_service/src/java"]
-                   :dependencies [[org.openvoxproject/kitchensink :classifier "test" :exclusions [cheshire]]]}
+                   :dependencies [[org.openvoxproject/kitchensink :exclusions [cheshire] :classifier "test"]]}
 
              :testutils {:source-paths ^:replace ["test"]}
              :uberjar {:aot [puppetlabs.trapperkeeper.main]
