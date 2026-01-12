@@ -24,7 +24,7 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v6
       - name: Install Clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
+        uses: DeLaGuardo/setup-clojure@13.5
         with:
           lein: latest
           clj-kondo: latest
@@ -53,7 +53,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.version }}
       - name: Install Clojure tools
-        uses: DeLaGuardo/setup-clojure@13.4
+        uses: DeLaGuardo/setup-clojure@13.5
         with:
           lein: latest
       - name: clojure tests
