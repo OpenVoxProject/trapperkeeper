@@ -54,7 +54,7 @@
                          [org.openvoxproject/i18n ~i18n-version]
                          [org.openvoxproject/kitchensink "3.5.5"]
                          [org.openvoxproject/kitchensink "3.5.5" :classifier "test"]
-                         [org.openvoxproject/typesafe-config "1.0.1"]
+                         [org.openvoxproject/typesafe-config "1.0.2"]
                          [prismatic/plumbing "0.6.0"]
                          [prismatic/schema "1.4.1"]]
   
