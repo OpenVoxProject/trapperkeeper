@@ -50,7 +50,7 @@
                          [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]
                          [commons-io "2.21.0"]
                          [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
-                         [nrepl/nrepl "0.9.0"]
+                         [nrepl/nrepl "1.6.0"]
                          [org.openvoxproject/i18n ~i18n-version]
                          [org.openvoxproject/kitchensink "3.5.5"]
                          [org.openvoxproject/kitchensink "3.5.5" :classifier "test"]
