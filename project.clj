@@ -45,7 +45,6 @@
                          [ch.qos.logback/logback-access ~logback-version]
 
                          [beckon "0.1.1"]
-                         [clj-time "0.15.2"]
                          [clj-commons/fs "1.6.312"]
                          [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]
                          [commons-io "2.21.0"]
@@ -72,7 +71,6 @@
                  [ch.qos.logback/logback-access]
                  [ch.qos.logback/logback-core]
                  [clj-commons/fs]
-                 [clj-time]
                  [com.kohlschutter.junixsocket/junixsocket-core :extension "pom"]
                  [io.github.clj-kondo/config-slingshot-slingshot]
                  [nrepl/nrepl]
