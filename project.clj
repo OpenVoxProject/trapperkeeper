@@ -16,7 +16,7 @@
 
 (fail-if-logback->1-3! logback-version)
 
-(defproject org.openvoxproject/trapperkeeper "4.3.5"
+(defproject org.openvoxproject/trapperkeeper "4.3.6-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
