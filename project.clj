@@ -1,6 +1,6 @@
 (def slf4j-version "2.0.17")
 (def logback-version "1.3.16")
-(def i18n-version "1.0.3")
+(def i18n-version "1.0.4")
 
 (require '[clojure.string :as str]
          '[leiningen.core.main :as main])
