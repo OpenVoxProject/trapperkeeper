@@ -1,5 +1,5 @@
 (def slf4j-version "2.0.18")
-(def logback-version "1.5.33")
+(def logback-version "1.5.34")
 (def i18n-version "1.0.4")
 
 (defproject org.openvoxproject/trapperkeeper "5.0.2-SNAPSHOT"
