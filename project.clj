@@ -28,7 +28,7 @@
                          [org.slf4j/log4j-over-slf4j ~slf4j-version]
                          [ch.qos.logback/logback-classic ~logback-version]
                          [ch.qos.logback/logback-core ~logback-version]
-                         [ch.qos.logback.access/logback-access-common "2.0.12"]
+                         [ch.qos.logback.access/logback-access-common "2.0.13"]
 
                          [beckon "0.1.1"]
                          [clj-commons/fs "1.6.312"]
