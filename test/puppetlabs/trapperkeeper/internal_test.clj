@@ -109,3 +109,22 @@
       ;; and make sure that we got one last :stop
       (is (= (conj expected-lifecycle-events :stop)
              @lifecycle-events)))))
+
+(deftest test-sighup-restart-debounce
+  (let [restart-calls (atom 0)]
+    (with-redefs [internal/now-ms (let [times (atom [1000 1100 2000])]
+                                    (fn []
+                                      (let [t (first @times)]
+                                        (swap! times rest)
+                                        t)))
+                  internal/restart-tk-apps (fn [_apps]
+                                             (swap! restart-calls inc))
+                  internal/last-sighup-restart-ms (atom nil)]
+      (internal/maybe-restart-tk-apps [:app])
+      (logging/with-test-logging
+        (internal/maybe-restart-tk-apps [:app])
+        (is (logged? "Ignoring duplicate SIGHUP restart request received within 500 ms"
+                     :warn)
+            "Missing expected warning log for duplicate SIGHUP"))
+      (internal/maybe-restart-tk-apps [:app])
+      (is (= 2 @restart-calls)))))
