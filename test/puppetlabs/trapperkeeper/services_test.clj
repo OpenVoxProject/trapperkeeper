@@ -55,6 +55,10 @@
 (defprotocol Service3
   (service3-fn [this]))
 
+(defprotocol CoordinatedReadyService
+  (mark-ready [this])
+  (current-readiness-state [this]))
+
 (deftest test-services-not-required
   (testing "services are not required to define lifecycle functions"
     (let [service1 (service Service1
@@ -519,6 +523,66 @@
               (is (every? #(satisfies? svcs/Service %) all-services))
               (is (= #{:EmptyService :HelloService}
                      (set (map svcs/service-id all-services)))))))))))
+
+(deftest readiness-service-falls-back-to-central-ready-notice
+  (let [ready-notices (atom 0)
+        service1 (service Service1
+                          []
+                          (service1-fn [_] "hi"))]
+    (with-redefs [internal/notice-service-ready #(swap! ready-notices inc)]
+      (with-app-with-empty-config app [service1]
+        (is (= 1 @ready-notices))))))
+
+(deftest readiness-service-defers-ready-notice-until-signaled
+  (let [ready-notices (atom 0)
+        coordinated-service
+        (service CoordinatedReadyService
+                 [[:ReadinessService register-ready! signal-ready! readiness-state]]
+                 (init [_ context]
+                   (register-ready! :CoordinatedReadyService)
+                   context)
+                 (start [_ context]
+                   context)
+                 (mark-ready [_]
+                   (signal-ready! :CoordinatedReadyService))
+                 (current-readiness-state [_]
+                   (readiness-state)))]
+    (with-redefs [internal/notice-service-ready #(swap! ready-notices inc)]
+      (with-app-with-empty-config app [coordinated-service]
+        (let [service (app/get-service app :CoordinatedReadyService)]
+          (is (zero? @ready-notices))
+          (is (= #{:CoordinatedReadyService}
+                 (get-in (current-readiness-state service) [:registered])))
+          (mark-ready service)
+          (is (= 1 @ready-notices))
+          (mark-ready service)
+          (is (= 1 @ready-notices)))))))
+
+(deftest readiness-service-resets-across-restart
+  (let [ready-notices (atom 0)
+        coordinated-service
+        (service CoordinatedReadyService
+                 [[:ReadinessService register-ready! signal-ready! readiness-state]]
+                 (init [_ context]
+                   (register-ready! :CoordinatedReadyService)
+                   context)
+                 (start [_ context]
+                   context)
+                 (mark-ready [_]
+                   (signal-ready! :CoordinatedReadyService))
+                 (current-readiness-state [_]
+                   (readiness-state)))]
+    (with-redefs [internal/notice-service-ready #(swap! ready-notices inc)]
+      (with-app-with-empty-config app [coordinated-service]
+        (let [service (app/get-service app :CoordinatedReadyService)]
+          (mark-ready service)
+          (is (= 1 @ready-notices))
+          (app/restart app)
+          (is (= 1 @ready-notices))
+          (is (= #{:CoordinatedReadyService}
+                 (get-in (current-readiness-state service) [:registered])))
+          (mark-ready service)
+          (is (= 2 @ready-notices)))))))
 
 (deftest minimal-services-test
   (testing "minimal services can be defined without a protocol"

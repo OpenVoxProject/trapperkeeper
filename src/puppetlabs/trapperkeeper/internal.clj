@@ -10,6 +10,7 @@
 
   (:require [clojure.tools.logging :as log]
             [beckon]
+            [clojure.set :as set]
             [plumbing.graph :as graph]
             [slingshot.slingshot :refer [throw+]]
             [puppetlabs.trapperkeeper.config :refer [config-service get-in-config]]
@@ -76,6 +77,22 @@
 (defn notice-service-ready [] (maybe-notify-systemd "READY=1\n"))
 (defn notice-service-reloading [] (maybe-notify-systemd "RELOADING=1\n"))
 (defn notice-service-stopping [] (maybe-notify-systemd "STOPPING=1\n"))
+
+(defn maybe-send-ready-notice!
+  [readiness-state]
+  (let [send-notice? (atom false)]
+    (swap! readiness-state
+           (fn [{:keys [notifications-enabled? registered ready notice-sent?] :as state}]
+             (if (and notifications-enabled?
+                      (not notice-sent?)
+                      (seq registered)
+                      (set/subset? registered ready))
+               (do
+                 (reset! send-notice? true)
+                 (assoc state :notice-sent? true))
+               state)))
+    (when @send-notice?
+      (notice-service-ready))))
 
 ;; This is (eww) a global variable that holds a reference to all of the running
 ;; Trapperkeeper apps in the process. It can be used when connecting via nrepl
@@ -469,6 +486,20 @@
     "Higher-order function to execute application logic and trigger shutdown in
     the event of an exception"))
 
+(defprotocol ReadinessService
+  (register-ready! [this service-id]
+    "Register a service that will signal readiness explicitly.")
+  (signal-ready! [this service-id]
+    "Mark a registered service as ready.")
+  (readiness-coordinated? [this]
+    "Returns true if any services have registered explicit readiness coordination.")
+  (enable-ready-notifications! [this]
+    "Allow readiness notifications to be emitted once all registered services are ready.")
+  (reset-readiness! [this]
+    "Reset readiness tracking for a boot or restart cycle.")
+  (readiness-state [this]
+    "Return the current readiness tracking state."))
+
 (schema/defn shutdown-service
   "Provides various functions for triggering application shutdown programatically.
   Primarily intended to serve application services, though TrapperKeeper also uses
@@ -496,6 +527,60 @@
     (request-shutdown [this opts]  (request-shutdown* shutdown-reason-promise opts))
     (shutdown-on-error [this svc-id f] (shutdown-on-error* shutdown-reason-promise app-context svc-id f))
     (shutdown-on-error [this svc-id f on-error] (shutdown-on-error* shutdown-reason-promise app-context svc-id f on-error))))
+
+(schema/defn readiness-service :- (schema/protocol s/ServiceDefinition)
+  "Provides explicit readiness coordination for services that need to delay
+  systemd READY=1 until after their own startup work is complete. Services that
+  participate should call `register-ready!` before app startup completes and
+  `signal-ready!` when they are actually ready to serve traffic."
+  []
+  (let [state (atom {:notifications-enabled? false
+                     :registered #{}
+                     :ready #{}
+                     :notice-sent? false})]
+    (s/service ReadinessService
+      []
+      (register-ready! [_ service-id]
+        (schema/validate schema/Keyword service-id)
+        (swap! state update :registered conj service-id)
+        (maybe-send-ready-notice! state)
+        nil)
+      (signal-ready! [_ service-id]
+        (schema/validate schema/Keyword service-id)
+        (swap! state update :ready conj service-id)
+        (maybe-send-ready-notice! state)
+        nil)
+      (readiness-coordinated? [_]
+        (boolean (seq (:registered @state))))
+      (enable-ready-notifications! [_]
+        (swap! state assoc :notifications-enabled? true)
+        (maybe-send-ready-notice! state)
+        nil)
+      (reset-readiness! [_]
+        (reset! state {:notifications-enabled? false
+                       :registered #{}
+                       :ready #{}
+                       :notice-sent? false})
+        nil)
+      (readiness-state [_]
+        @state))))
+
+(defn reset-readiness-tracking!
+  [services-by-id]
+  (when-let [readiness-service (services-by-id :ReadinessService)]
+    (reset-readiness! readiness-service)))
+
+(defn enable-ready-notifications-for-app!
+  [services-by-id]
+  (when-let [readiness-service (services-by-id :ReadinessService)]
+    (enable-ready-notifications! readiness-service)))
+
+(defn notice-service-ready-if-uncoordinated!
+  [services-by-id]
+  (if-let [readiness-service (services-by-id :ReadinessService)]
+    (when-not (readiness-coordinated? readiness-service)
+      (notice-service-ready))
+    (notice-service-ready)))
 
 (schema/defn ^:always-validate shutdown! :- [Throwable]
   "Perform shutdown calling the `stop` lifecycle function on each service,
@@ -633,6 +718,7 @@
         service-refs (atom {})
         services (conj services
                        (config-service config-data-fn)
+                       (readiness-service)
                        (initialize-shutdown-service! app-context
                                                      shutdown-reason-promise))
         service-map (apply merge (map s/service-map services))
@@ -660,11 +746,13 @@
       (a/check-for-errors! [this] (throw-app-error-if-exists!
                                    this))
       (a/init [this]
+        (reset-readiness-tracking! services-by-id)
         (run-lifecycle-fns app-context s/init "init" ordered-services)
         this)
       (a/start [this]
         (run-lifecycle-fns app-context s/start "start" ordered-services)
-        (notice-service-ready)
+        (enable-ready-notifications-for-app! services-by-id)
+        (notice-service-ready-if-uncoordinated! services-by-id)
         (inc-restart-counter! this)
         this)
       (a/stop [this]
@@ -682,9 +770,11 @@
           (notice-service-reloading)
           (run-lifecycle-fns app-context s/stop "stop" (reverse ordered-services))
           (doseq [svc-id (keys services-by-id)] (swap! app-context assoc-in [:service-contexts svc-id] {}))
+          (reset-readiness-tracking! services-by-id)
           (run-lifecycle-fns app-context s/init "init" ordered-services)
           (run-lifecycle-fns app-context s/start "start" ordered-services)
-          (notice-service-ready)
+          (enable-ready-notifications-for-app! services-by-id)
+          (notice-service-ready-if-uncoordinated! services-by-id)
           (inc-restart-counter! this)
           this
           (catch Throwable t
