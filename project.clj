@@ -2,7 +2,7 @@
 (def logback-version "1.5.38")
 (def i18n-version "1.0.4")
 
-(defproject org.openvoxproject/trapperkeeper "5.0.4"
+(defproject org.openvoxproject/trapperkeeper "5.0.5-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
 
   :license {:name "Apache License, Version 2.0"
