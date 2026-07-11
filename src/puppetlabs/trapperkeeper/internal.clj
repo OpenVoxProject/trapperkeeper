@@ -102,6 +102,32 @@
 
 (def max-pending-lifecycle-events 5)
 
+;; Debounce at the signal handler boundary to avoid back-to-back
+;; restart cycles that can interrupt in-flight agent requests.
+(def min-sighup-restart-interval-ms 500)
+(def last-sighup-restart-ms (atom nil))
+
+(defn now-ms []
+  (System/currentTimeMillis))
+
+(defn should-handle-sighup-restart?
+  []
+  (let [current-ms (now-ms)
+        accepted? (atom false)]
+    (swap! last-sighup-restart-ms
+           (fn [last-ms]
+             (if (and (some? last-ms)
+                      (< (- current-ms last-ms) min-sighup-restart-interval-ms))
+               last-ms
+               (do
+                 (reset! accepted? true)
+                 current-ms))))
+    @accepted?))
+
+(defn app-log-id
+  [app]
+  (str "app=0x" (Integer/toHexString (System/identityHashCode app))))
+
 (defn service-graph?
   "Predicate that tests whether or not the argument is a valid trapperkeeper
   service graph."
@@ -368,6 +394,7 @@
   [apps]
   (log/info (i18n/trs "SIGHUP handler restarting TK apps."))
   (doseq [app apps]
+    (log/info (i18n/trs "Queueing SIGHUP restart for TK {0}" (app-log-id app)))
     (let [{:keys [lifecycle-channel]} @(a/app-context app)
           restart-fn #(a/restart app)]
       (when-not (async/offer! lifecycle-channel
@@ -375,6 +402,14 @@
                                :task-function restart-fn})
         (log/warn (i18n/trs "Ignoring new SIGHUP restart requests; too many requests queued ({0})"
                             max-pending-lifecycle-events))))))
+
+(defn maybe-restart-tk-apps
+  "Restart all TK apps unless this SIGHUP request is a rapid duplicate."
+  [apps]
+  (if (should-handle-sighup-restart?)
+    (restart-tk-apps apps)
+    (log/warn (i18n/trs "Ignoring duplicate SIGHUP restart request received within {0} ms"
+                        min-sighup-restart-interval-ms))))
 
 (defn register-sighup-handler
   "Register a handler for SIGHUP that restarts all trapperkeeper apps. The
@@ -384,7 +419,7 @@
    (register-sighup-handler @tk-apps))
   ([apps]
    (log/debug (i18n/trs "Registering SIGHUP handler for restarting TK apps"))
-   (reset! (beckon/signal-atom "HUP") #{(partial restart-tk-apps apps)})))
+    (reset! (beckon/signal-atom "HUP") #{(partial maybe-restart-tk-apps apps)})))
 
 ;;;; Application Shutdown Support
 ;;;;
@@ -767,6 +802,7 @@
             this)))
       (a/restart [this]
         (try
+          (log/info (i18n/trs "Starting restart for TK {0}" (app-log-id this)))
           (notice-service-reloading)
           (run-lifecycle-fns app-context s/stop "stop" (reverse ordered-services))
           (doseq [svc-id (keys services-by-id)] (swap! app-context assoc-in [:service-contexts svc-id] {}))
@@ -775,6 +811,7 @@
           (run-lifecycle-fns app-context s/start "start" ordered-services)
           (enable-ready-notifications-for-app! services-by-id)
           (notice-service-ready-if-uncoordinated! services-by-id)
+          (log/info (i18n/trs "Finished restart for TK {0}" (app-log-id this)))
           (inc-restart-counter! this)
           this
           (catch Throwable t
