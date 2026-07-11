@@ -171,7 +171,7 @@
       (if (sequential? (:error data))
         (let [missing-services (keys (ks/filter-map
                                       (fn [_ v] (= v 'missing-required-key))
-                                      (.error (first (:error data)))))]
+                                      (:error (first (:error data)))))]
           (if (= 1 (count missing-services))
             (throw (RuntimeException.
                     (i18n/trs "Service ''{0}'' not found" (first missing-services))))
