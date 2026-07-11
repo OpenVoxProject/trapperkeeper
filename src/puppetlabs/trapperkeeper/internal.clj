@@ -61,6 +61,9 @@
   "Send a message to systemd NOTIFY_SOCKET if available."
   [^String message]
   (when-let [^String socket-path systemd-notify-socket]
+    (log/info (i18n/trs "Sending sd_notify message to NOTIFY_SOCKET {0}: {1}"
+                        (pr-str socket-path)
+                        (pr-str message)))
     (let [^AFUNIXSocketAddress addr (socket-addr socket-path)]
       (with-open [^AFUNIXDatagramSocket s (AFUNIXDatagramSocket/newInstance)]
         (try
