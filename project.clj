@@ -41,7 +41,7 @@
                          [org.openvoxproject/kitchensink "3.5.7" :classifier "test"]
                          [org.openvoxproject/typesafe-config "1.0.4"]
                          [prismatic/plumbing "0.6.0"]
-                         [prismatic/schema "1.4.1"]]
+                         [prismatic/schema "1.4.2"]]
 
   :dependencies [[org.clojure/clojure]
                  [org.clojure/core.async]
