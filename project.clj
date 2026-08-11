@@ -32,7 +32,7 @@
 
                          [beckon "0.1.1"]
                          [clj-commons/fs "1.6.312"]
-                         [com.kohlschutter.junixsocket/junixsocket-core "2.10.1" :extension "pom"]
+                         [com.kohlschutter.junixsocket/junixsocket-core "2.11.0" :extension "pom"]
                          [commons-io "2.22.0"]
                          [io.github.clj-kondo/config-slingshot-slingshot "1.0.0"]
                          [nrepl/nrepl "0.9.0"]
