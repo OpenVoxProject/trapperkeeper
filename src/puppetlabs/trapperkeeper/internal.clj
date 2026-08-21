@@ -797,8 +797,8 @@
       (a/start [this]
         (run-lifecycle-fns app-context s/start "start" ordered-services)
         (enable-ready-notifications-for-app! services-by-id)
-        (notice-service-ready-if-uncoordinated! services-by-id)
         (inc-restart-counter! this)
+        (notice-service-ready-if-uncoordinated! services-by-id)
         this)
       (a/stop [this]
         (a/stop this false))
@@ -820,9 +820,9 @@
           (run-lifecycle-fns app-context s/init "init" ordered-services)
           (run-lifecycle-fns app-context s/start "start" ordered-services)
           (enable-ready-notifications-for-app! services-by-id)
+          (inc-restart-counter! this)
           (notice-service-ready-if-uncoordinated! services-by-id)
           (log/info (i18n/trs "Finished restart for TK {0}" (app-log-id this)))
-          (inc-restart-counter! this)
           this
           (catch Throwable t
             (deliver shutdown-reason-promise {:cause :service-error
