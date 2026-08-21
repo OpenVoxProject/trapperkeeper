@@ -113,25 +113,15 @@
 (defn should-handle-sighup-restart?
   []
   (let [current-ms (now-ms)
-        accepted? (atom false)
-        previous-ms (atom nil)]
+        accepted? (atom false)]
     (swap! last-sighup-restart-ms
            (fn [last-ms]
-             (reset! previous-ms last-ms)
              (if (and (some? last-ms)
                       (< (- current-ms last-ms) min-sighup-restart-interval-ms))
                last-ms
                (do
                  (reset! accepted? true)
                  current-ms))))
-    (if @accepted?
-      (log/debug (i18n/trs "Accepting SIGHUP restart at {0}; previous accepted restart was {1}"
-                           current-ms
-                           @previous-ms))
-      (log/warn (i18n/trs "Ignoring duplicate SIGHUP restart at {0}; previous accepted restart was {1}; minimum interval is {2} ms"
-                          current-ms
-                          @previous-ms
-                          min-sighup-restart-interval-ms)))
     @accepted?))
 
 (defn app-log-id
