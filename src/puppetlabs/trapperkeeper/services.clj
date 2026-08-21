@@ -103,7 +103,7 @@
                          (get-services [this#]
                            (-> ~'@tk-app-context
                                :services-by-id
-                               (dissoc :ConfigService :ShutdownService :ReadinessService)
+                               (dissoc :ConfigService :ShutdownService)
                                vals))
                          (service-symbol [this#] '~service-sym)
                          (service-included? [this# service-id#]

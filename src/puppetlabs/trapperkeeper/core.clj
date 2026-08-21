@@ -13,19 +13,17 @@
   (:import
    (clojure.lang ExceptionInfo)))
 
-(defmacro service
-  "An alias for the `puppetlabs.trapperkeeper.services/service` macro
-  so that it is accessible from the core namespace along with the
-  rest of the API."
-  [& forms]
-  `(services/service ~@forms))
+(def #^{:macro true
+        :doc "An alias for the `puppetlabs.trapperkeeper.services/service` macro
+             so that it is accessible from the core namespace along with the
+             rest of the API."}
+       service #'services/service)
 
-(defmacro defservice
-  "An alias for the `puppetlabs.trapperkeeper.services/defservice` macro
-  so that it is accessible from the core namespace along with the
-  rest of the API."
-  [svc-name & forms]
-  `(services/defservice ~svc-name ~@forms))
+(def #^{:macro true
+        :doc "An alias for the `puppetlabs.trapperkeeper.services/defservice` macro
+             so that it is accessible from the core namespace along with the
+             rest of the API."}
+       defservice #'services/defservice)
 
 (defn build-app
   "Given a list of services and a map of configuration data, build an instance
