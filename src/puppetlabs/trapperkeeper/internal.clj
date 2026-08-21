@@ -671,6 +671,7 @@
     (ks/add-shutdown-hook! (fn []
                           (when-not (realized? shutdown-reason-promise)
                             (log/info (i18n/trs "Shutting down due to JVM shutdown hook."))
+                            (notice-service-stopping)
                             (shutdown! app-context)
                             (deliver shutdown-reason-promise {:cause :jvm-shutdown-hook}))))
     shutdown-service))
