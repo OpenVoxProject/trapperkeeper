@@ -77,6 +77,17 @@
               (.toInt ^Level level))
        (.setLevel root level)))))
 
+(defn- do-configure
+  "Calls the appropriate overload of `doConfigure` for the runtime type of
+  `logging-conf`, so that the call can be resolved without reflection."
+  [^JoranConfigurator configurator logging-conf]
+  (condp instance? logging-conf
+    java.io.File (.doConfigure configurator ^java.io.File logging-conf)
+    java.io.InputStream (.doConfigure configurator ^java.io.InputStream logging-conf)
+    java.net.URL (.doConfigure configurator ^java.net.URL logging-conf)
+    org.xml.sax.InputSource (.doConfigure configurator ^org.xml.sax.InputSource logging-conf)
+    (.doConfigure configurator ^String logging-conf)))
+
 (defn configure-logger!
   "Reconfigures the current logger based on the supplied configuration.
 
@@ -89,7 +100,7 @@
         context      (logging-context)]
     (.setContext configurator context)
     (.reset context)
-    (.doConfigure configurator logging-conf)))
+    (do-configure configurator logging-conf)))
 
 (defn configure-logging!
   "Takes a file path, url, file, InputStream, or InputSource which can

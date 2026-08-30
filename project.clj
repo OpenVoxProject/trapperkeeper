@@ -94,9 +94,7 @@
   :plugins [[jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]
             [org.openvoxproject/i18n ~i18n-version]]
 
-  :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.logging [{:line 92}]
-                                           puppetlabs.trapperkeeper.internal [{:line 177}]
-                                           puppetlabs.trapperkeeper.testutils.logging true
+  :eastwood {:ignored-faults {:reflection {puppetlabs.trapperkeeper.testutils.logging true
                                            puppetlabs.trapperkeeper.testutils.logging-test true
                                            puppetlabs.trapperkeeper.services.nrepl.nrepl-service-test true
                                            puppetlabs.trapperkeeper.plugins-test true}
