@@ -73,8 +73,14 @@
             (log/warn (i18n/trs "Unable to connect to NOTIFY_SOCKET {0}"
                                 (pr-str socket-path)))))))))
 
+;;; Messages sent to the SystemD socket to indicate various service states.
+;;; See the "Type=" section of the man page for "systemd.service" for schema:
+;;;
+;;;   https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#Type=
 (defn notice-service-ready [] (maybe-notify-systemd "READY=1\n"))
-(defn notice-service-reloading [] (maybe-notify-systemd "RELOADING=1\n"))
+(defn notice-service-reloading []
+  (maybe-notify-systemd
+    (str "RELOADING=1\nMONOTONIC_USEC=" (quot (System/nanoTime) 1000) "\n")))
 (defn notice-service-stopping [] (maybe-notify-systemd "STOPPING=1\n"))
 
 ;; This is (eww) a global variable that holds a reference to all of the running
@@ -174,7 +180,7 @@
       (if (sequential? (:error data))
         (let [missing-services (keys (ks/filter-map
                                       (fn [_ v] (= v 'missing-required-key))
-                                      (.error (first (:error data)))))]
+                                      (.error ^schema.utils.NamedError (first (:error data)))))]
           (if (= 1 (count missing-services))
             (throw (RuntimeException.
                     (i18n/trs "Service ''{0}'' not found" (first missing-services))))
