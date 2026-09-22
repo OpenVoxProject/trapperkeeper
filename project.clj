@@ -39,7 +39,7 @@
                          [org.openvoxproject/i18n ~i18n-version]
                          [org.openvoxproject/kitchensink "3.5.8"]
                          [org.openvoxproject/kitchensink "3.5.8" :classifier "test"]
-                         [org.openvoxproject/typesafe-config "1.0.4"]
+                         [org.openvoxproject/typesafe-config "1.0.5"]
                          [prismatic/plumbing "0.6.0"]
                          [prismatic/schema "1.4.2"]]
 
