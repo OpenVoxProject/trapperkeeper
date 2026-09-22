@@ -1,6 +1,6 @@
 (def slf4j-version "2.0.19")
 (def logback-version "1.6.3")
-(def i18n-version "1.0.5")
+(def i18n-version "1.0.6")
 
 (defproject org.openvoxproject/trapperkeeper "5.0.7-SNAPSHOT"
   :description "A framework for configuring, composing, and running Clojure services."
