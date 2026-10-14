@@ -24,3 +24,21 @@ else
     config.release_branch = 'main'
   end
 end
+
+namespace :vox do
+  desc 'Set the version in project.clj for the release'
+  task 'version:bump:full', [:version] do |_, args|
+    version = args[:version]
+    abort 'You must provide a version.' if version.nil? || version.empty?
+
+    project = File.read('project.clj')
+    defproject = /^(\(defproject\s+\S+\s+)"[^"]+"/
+    abort 'Could not find the defproject version in project.clj' unless project.match?(defproject)
+
+    File.write('project.clj', project.sub(defproject) { "#{Regexp.last_match(1)}\"#{version}\"" })
+    puts "Set the version in project.clj to #{version}"
+  end
+end
+
+desc 'Prepare for a release'
+task 'release:prepare' => [:changelog]
