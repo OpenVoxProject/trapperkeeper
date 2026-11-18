@@ -21,7 +21,7 @@
   ;; Renovate should keep the versions largely in sync between projects.
   :managed-dependencies [[org.clojure/clojure "1.12.6"]
                          [org.clojure/core.async "1.9.865"]
-                         [org.clojure/tools.logging "1.3.1"]
+                         [org.clojure/tools.logging "1.3.2"]
                          [org.clojure/tools.macro "0.2.2"]
 
                          [org.slf4j/slf4j-api ~slf4j-version]
